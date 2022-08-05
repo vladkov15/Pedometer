@@ -1,20 +1,23 @@
-  using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class JavaTest : MonoBehaviour
+public class JavaStepCouter : MonoBehaviour
 {
     AndroidJavaClass unityClass;
     AndroidJavaObject unityActivity;
     AndroidJavaObject _pluginInstance;
+    public Text steps_text;
 
     // Start is called before the first frame update
     void Start()
     {
-        InitializePlugin("com.example.test.PluginInstance");  
+        InitializePlugin("com.example.pedometr.StepCounter");
+        
     }
 
-    void InitializePlugin(string plaginName) 
+    void InitializePlugin(string plaginName)
     {
         unityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
         unityActivity = unityClass.GetStatic<AndroidJavaObject>("currentActivity");
@@ -25,23 +28,7 @@ public class JavaTest : MonoBehaviour
         }
         _pluginInstance.CallStatic("receiveUnityActivity", unityActivity);
         _pluginInstance.Call("OnResume");
-    }
-
-    public void Add()
-    {
-        if (_pluginInstance != null)
-        {
-            var result = _pluginInstance.Call<int>("Add", 2, 4);
-            Debug.Log("Add result: " + result);
-        }   
-    }
-
-    public void Toast() 
-    {
-        if (_pluginInstance != null)
-        {
-           // int amount =_pluginInstance.Call<int>("getSteps");
-            _pluginInstance.Call("Toast", "yes..yes..yes");
-        }
+        int steps = _pluginInstance.Get<int>("steps");
+        steps_text.text = "number of steps" + steps;
     }
 }
